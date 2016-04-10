@@ -1,27 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
+public class transform : MonoBehaviour {
+	public float speed;
+	public float deploymentHeight;
 
-public class transform : MonoBehaviour
-{
-    
-    public float speed;
-    private float nextFire;
-    public GameObject mycam;
-    //private Vector3 camVector;
+	// Update is called once per frame
+	void Update () {
+		transform.Translate(transform.forward * speed * Time.deltaTime);
+	}
 
-    
+	void FixedUpdate() {
+		RaycastHit hit;
 
-    //void Start()
-    //{
-    //    camVector = mycam.transform.up;
-    //}
-
-    void Update()
-    {
-        transform.Translate(transform.forward * speed * Time.deltaTime);
-    }
-
-
+		if(Physics.Raycast (transform.position, Vector3.forward, out hit, deploymentHeight))
+		{
+			if(hit.collider.tag == "Enemy")
+			{
+				Destroy(this.gameObject);
+				Destroy(hit.collider.gameObject);
+			}
+		}
+	}
 }

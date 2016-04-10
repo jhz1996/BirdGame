@@ -41,9 +41,9 @@ public class UnityEditorDevice : BaseVRDevice {
 
   // Since we can check all these settings by asking Cardboard.SDK, no need
   // to keep a separate copy here.
-  public override void SetUILayerEnabled(bool enabled) {}
   public override void SetVRModeEnabled(bool enabled) {}
   public override void SetDistortionCorrectionEnabled(bool enabled) {}
+  public override void SetStereoScreen(RenderTexture stereoScreen) {}
   public override void SetSettingsButtonEnabled(bool enabled) {}
   public override void SetAlignmentMarkerEnabled(bool enabled) {}
   public override void SetVRBackButtonEnabled(bool enabled) {}
@@ -51,6 +51,7 @@ public class UnityEditorDevice : BaseVRDevice {
   public override void SetNeckModelScale(float scale) {}
   public override void SetAutoDriftCorrectionEnabled(bool enabled) {}
   public override void SetElectronicDisplayStabilizationEnabled(bool enabled) {}
+  public override void SetTapIsTrigger(bool enabled) {}
 
   private Quaternion initialRotation = Quaternion.identity;
 
@@ -58,7 +59,11 @@ public class UnityEditorDevice : BaseVRDevice {
   private bool RemoteCommunicating {
     get {
       if (!remoteCommunicating) {
+#if UNITY_5
         remoteCommunicating = EditorApplication.isRemoteConnected;
+#else
+        remoteCommunicating = Vector3.Dot(Input.gyro.rotationRate, Input.gyro.rotationRate) > 0.05;
+#endif
       }
       return remoteCommunicating;
     }
@@ -99,7 +104,7 @@ public class UnityEditorDevice : BaseVRDevice {
     tilted = Input.GetKeyUp(KeyCode.Escape);
   }
 
-  public override void PostRender(RenderTexture stereoScreen) {
+  public override void PostRender() {
     // Do nothing.
   }
 
